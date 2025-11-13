@@ -1,0 +1,86 @@
+.navbar {
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.navbar-item {
+  color: var(--text-color);
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.navbar-item:hover {
+  color: var(--primary-color);
+}
+
+.navbar-user {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 0.5rem 1rem;
+  background-color: var(--light-color);
+  border-radius: 6px;
+}
+
+.user-name {
+  font-weight: 600;
+  color: var(--dark-color);
+}
+
+.user-role {
+  font-size: 0.75rem;
+  color: var(--text-color);
+  text-transform: capitalize;
+}
+
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 0 1rem;
+  }
+
+  .navbar-menu {
+    gap: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .navbar-user {
+    padding: 0.25rem 0.5rem;
+  }
+
+  .user-name {
+    font-size: 0.875rem;
+  }
+}
