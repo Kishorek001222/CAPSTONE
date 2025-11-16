@@ -1,17 +1,52 @@
 {
-  "name": "capstone",
+  "name": "decentralized-identity-system",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A blockchain-based Decentralized Identity Management System for educational credentials using Ethereum smart contracts, IPFS, and modern web technologies",
+  "main": "hardhat.config.js",
   "directories": {
-    "test": "test"
+    "test": "test",
+    "contracts": "contracts",
+    "scripts": "scripts"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "hardhat test",
+    "test:coverage": "hardhat coverage",
+    "compile": "hardhat compile",
+    "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
+    "deploy:localhost": "hardhat run scripts/deploy.js --network localhost",
+    "node": "hardhat node",
+    "clean": "hardhat clean",
+    "setup": "npm install && cd api && npm install && cd ../client && npm install && cd ..",
+    "dev:api": "cd api && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "start:api": "cd api && npm start",
+    "start:client": "cd client && npm run dev"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "blockchain",
+    "ethereum",
+    "decentralized-identity",
+    "DID",
+    "verifiable-credentials",
+    "smart-contracts",
+    "solidity",
+    "hardhat",
+    "ipfs",
+    "web3",
+    "education",
+    "credentials",
+    "capstone-project"
+  ],
+  "author": "Capstone Project",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/8harath/Kishore-Capstone"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^6.1.0",
     "dotenv": "^17.2.3",
