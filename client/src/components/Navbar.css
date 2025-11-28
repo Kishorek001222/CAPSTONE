@@ -66,6 +66,23 @@
   font-size: 0.875rem;
 }
 
+.demo-tag {
+  font-size: 0.7rem;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  margin-left: 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.demo-notice {
+  color: var(--primary-color);
+  font-weight: 600;
+  font-style: italic;
+}
+
 @media (max-width: 768px) {
   .navbar-container {
     padding: 0 1rem;

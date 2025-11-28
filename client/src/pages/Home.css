@@ -119,6 +119,67 @@
   margin-bottom: 2rem;
 }
 
+/* Demo Mode Styles */
+.demo-badge {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  display: inline-block;
+  margin-top: 1rem;
+  font-weight: 600;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.role-card {
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.role-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.role-card:hover::before {
+  opacity: 1;
+}
+
+.role-name {
+  font-weight: 600;
+  color: var(--primary-color);
+  font-size: 1.1rem;
+  margin: 0.5rem 0 0.25rem 0;
+}
+
+.role-org {
+  font-size: 0.9rem;
+  color: var(--text-color);
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+.demo-info {
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  border-radius: 12px;
+  margin: 2rem 0;
+}
+
+.demo-info h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: var(--dark-color);
+}
+
 @media (max-width: 768px) {
   .hero-title {
     font-size: 2rem;
@@ -138,5 +199,10 @@
 
   .btn-lg {
     width: 100%;
+  }
+
+  .role-card .btn {
+    width: 100%;
+    margin-top: 1rem;
   }
 }
