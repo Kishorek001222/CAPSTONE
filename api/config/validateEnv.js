@@ -8,6 +8,7 @@ const isMissing = (key) => !process.env[key] || process.env[key].trim() === '';
 
 const validateEnv = () => {
   const nodeEnv = process.env.NODE_ENV || 'development';
+  const allowPartialIntegrations = process.env.ALLOW_PARTIAL_INTEGRATIONS === 'true';
   const missing = [];
   const warnings = [];
 
@@ -41,7 +42,7 @@ const validateEnv = () => {
 
   if (warnings.length > 0) {
     const warningText = `Optional production integrations are not fully configured: ${warnings.join(', ')}`;
-    if (nodeEnv === 'production') {
+    if (nodeEnv === 'production' && !allowPartialIntegrations) {
       throw new Error(warningText);
     }
     console.warn(warningText);
