@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { DemoProvider, useDemo } from './context/DemoContext';
 import NavbarDemo from './components/NavbarDemo';
+import EnvironmentBanner from './components/EnvironmentBanner';
 import HomeDemo from './pages/HomeDemo';
 import StudentDashboardDemo from './pages/StudentDashboardDemo';
 import UniversityDashboardDemo from './pages/UniversityDashboardDemo';
@@ -33,6 +34,7 @@ function AppRoutes() {
   return (
     <Router>
       <div className="App">
+        <EnvironmentBanner />
         <NavbarDemo />
         <main className="main-content">
           <Routes>

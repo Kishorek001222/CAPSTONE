@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
+import EnvironmentBanner from './components/EnvironmentBanner';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -35,6 +36,7 @@ function AppRoutes() {
   return (
     <Router>
       <div className="App">
+        <EnvironmentBanner />
         <Navbar />
         <main className="main-content">
           <Routes>
