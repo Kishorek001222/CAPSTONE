@@ -1,6 +1,10 @@
 const Credential = require('../models/Credential');
 const User = require('../models/User');
-const { ethers } = require('ethers');
+const ipfsService = require('../services/ipfsService');
+const {
+  normalizeCredentialPayload,
+  createDeterministicCredentialHash
+} = require('../utils/credentialUtils');
 
 // @desc    Issue a new credential
 // @route   POST /api/credentials/issue
@@ -18,7 +22,7 @@ const issueCredential = async (req, res) => {
     } = req.body;
 
     // Validate required fields
-    if (!subjectEmail || !credentialType || !ipfsHash || !credentialHash || !transactionHash) {
+    if (!subjectEmail || !credentialType || !transactionHash) {
       return res.status(400).json({
         success: false,
         message: 'Please provide all required fields'
@@ -50,16 +54,50 @@ const issueCredential = async (req, res) => {
       });
     }
 
+    const normalizedCredentialData = normalizeCredentialPayload({
+      ...credentialData,
+      institution: credentialData?.institution || req.user.organization,
+      issuedBy: credentialData?.issuedBy || req.user.name
+    });
+
+    const resolvedCredentialHash =
+      credentialHash ||
+      createDeterministicCredentialHash({
+        credentialType,
+        credentialData: normalizedCredentialData,
+        issuer: req.user.walletAddress,
+        subject: subject.walletAddress
+      });
+
+    let resolvedIpfsHash = ipfsHash;
+    if (!resolvedIpfsHash && ipfsService.isConfigured()) {
+      const verifiableCredential = ipfsService.createVerifiableCredential({
+        issuer: req.user,
+        subject,
+        credentialType,
+        credentialData: normalizedCredentialData,
+        expiresAt
+      });
+      resolvedIpfsHash = await ipfsService.uploadJSON(
+        verifiableCredential,
+        `${credentialType}-${subject.email}`
+      );
+    }
+
+    if (!resolvedIpfsHash) {
+      resolvedIpfsHash = `pending-ipfs-${resolvedCredentialHash.slice(2, 14)}`;
+    }
+
     // Create credential in database
     const credential = await Credential.create({
-      credentialHash,
+      credentialHash: resolvedCredentialHash,
       issuer: req.user._id,
       issuerAddress: req.user.walletAddress,
       subject: subject._id,
       subjectAddress: subject.walletAddress,
       credentialType,
-      credentialData,
-      ipfsHash,
+      credentialData: normalizedCredentialData,
+      ipfsHash: resolvedIpfsHash,
       transactionHash,
       expiresAt: expiresAt || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // Default 1 year
       blockchainStatus: 'confirmed'
@@ -216,10 +254,28 @@ const getStudents = async (req, res) => {
   }
 };
 
+// @desc    Get integration readiness status
+// @route   GET /api/credentials/integrations
+// @access  Private (University only)
+const getIntegrationStatus = async (req, res) => {
+  const hasRpc = Boolean(process.env.SEPOLIA_RPC_URL || process.env.RPC_URL);
+  const hasContract = Boolean(process.env.CONTRACT_ADDRESS);
+  const hasPinata = ipfsService.isConfigured();
+
+  res.status(200).json({
+    success: true,
+    data: {
+      blockchain: hasRpc && hasContract,
+      ipfs: hasPinata
+    }
+  });
+};
+
 module.exports = {
   issueCredential,
   getMyCredentials,
   getCredentialByHash,
   revokeCredential,
-  getStudents
+  getStudents,
+  getIntegrationStatus
 };

@@ -11,6 +11,7 @@ const UniversityDashboard = () => {
   const [students, setStudents] = useState([]);
   const [issuedCredentials, setIssuedCredentials] = useState([]);
   const [showIssueForm, setShowIssueForm] = useState(false);
+  const [integrationStatus, setIntegrationStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [issuing, setIssuing] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
@@ -38,6 +39,13 @@ const UniversityDashboard = () => {
       ]);
       setStudents(studentsRes.data.data);
       setIssuedCredentials(credentialsRes.data.data);
+
+      try {
+        const integrationRes = await credentialAPI.getIntegrationStatus();
+        setIntegrationStatus(integrationRes.data.data);
+      } catch (integrationError) {
+        console.warn('Integration status unavailable', integrationError);
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
       setMessage({ type: 'error', text: 'Failed to load data' });
@@ -96,35 +104,12 @@ const UniversityDashboard = () => {
         issuedBy: user.name,
       };
 
-      // Create credential hash
+      // Hashing and IPFS are handled by backend for consistency and auditability.
       const credentialHash = blockchainService.createCredentialHash({
         ...credentialData,
-        subject: student.email,
-        issuer: user.email,
-        timestamp: Date.now(),
+        subject: student.walletAddress,
+        issuer: user.walletAddress,
       });
-
-      // Create verifiable credential for IPFS
-      const verifiableCredential = {
-        '@context': ['https://www.w3.org/2018/credentials/v1'],
-        type: ['VerifiableCredential', formData.credentialType],
-        issuer: {
-          id: user.did || user.walletAddress,
-          name: user.name,
-          organization: user.organization,
-        },
-        issuanceDate: new Date().toISOString(),
-        expirationDate: formData.expiresAt,
-        credentialSubject: {
-          id: student.did || student.walletAddress,
-          name: student.name,
-          email: student.email,
-          ...credentialData,
-        },
-      };
-
-      // In production, upload to IPFS here
-      const ipfsHash = `Qm${Math.random().toString(36).substring(7)}`;
 
       // Issue on blockchain
       const expiresAt = formData.expiresAt || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
@@ -145,7 +130,6 @@ const UniversityDashboard = () => {
         subjectEmail: formData.studentEmail,
         credentialType: formData.credentialType,
         credentialData,
-        ipfsHash,
         credentialHash,
         transactionHash: txResult.transactionHash,
         expiresAt,
@@ -198,6 +182,15 @@ const UniversityDashboard = () => {
       {message.text && (
         <div className={`alert alert-${message.type}`}>
           {message.text}
+        </div>
+      )}
+
+      {integrationStatus && (!integrationStatus.blockchain || !integrationStatus.ipfs) && (
+        <div className="alert alert-warning">
+          Some integrations are incomplete:
+          {!integrationStatus.blockchain ? ' blockchain' : ''}
+          {!integrationStatus.ipfs ? ' ipfs' : ''}.
+          Issuance may run in partial mode.
         </div>
       )}
 

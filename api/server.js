@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/database');
+const validateEnv = require('./config/validateEnv');
 const errorHandler = require('./middlewares/errorHandler');
 const authRoutes = require('./routes/authRoutes');
 const credentialRoutes = require('./routes/credentialRoutes');
@@ -9,6 +10,9 @@ const blockchainService = require('./services/blockchainService');
 
 // Load env vars
 dotenv.config();
+
+// Validate critical runtime configuration
+validateEnv();
 
 // Connect to database
 connectDB();
@@ -36,10 +40,20 @@ app.use('/api/credentials', credentialRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
+  const hasRpc = Boolean(process.env.SEPOLIA_RPC_URL || process.env.RPC_URL);
+  const hasPinata = Boolean(process.env.PINATA_API_KEY && process.env.PINATA_SECRET_KEY);
+  const hasContract = Boolean(process.env.CONTRACT_ADDRESS);
+
   res.status(200).json({
     success: true,
     message: 'API is running',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    mode: process.env.NODE_ENV || 'development',
+    integrations: {
+      database: true,
+      blockchain: hasRpc && hasContract,
+      ipfs: hasPinata
+    }
   });
 });
 

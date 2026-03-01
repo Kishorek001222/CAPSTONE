@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Capstone Progress Presentation</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="deck">
+      <section class="slide active">
+        <div class="slide-inner">
+          <p class="kicker">Capstone Progress Review</p>
+          <h1>Decentralized Identity Management System</h1>
+          <p class="subtitle">Self-Sovereign Identity for Academic Credential Verification</p>
+          <div class="hero-grid">
+            <div class="meta">
+              <p><strong>Presenter:</strong> Kishore</p>
+              <p><strong>Track:</strong> Computer Science Capstone</p>
+              <p><strong>Date:</strong> March 2026</p>
+              <p><strong>Branch:</strong> docs/production-final-guide</p>
+            </div>
+            <div class="card">
+              <h3>Objective</h3>
+              <p>Present progress made so far, current implementation status, and pending milestones for final project approval.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide-inner">
+          <h2>2. Components</h2>
+          <div class="grid">
+            <div class="card">
+              <h3>Frontend (React)</h3>
+              <ul>
+                <li>Role-based dashboards for Student, University, Employer.</li>
+                <li>Credential issue/verify UI and workflow views.</li>
+                <li>Main and Demo mode separation with mode banner.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Backend (Node/Express)</h3>
+              <ul>
+                <li>Auth, credential APIs, role-based access control.</li>
+                <li>Credential metadata persistence and orchestration.</li>
+                <li>Integration readiness and health visibility.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="card">
+              <h3>Blockchain (Ethereum)</h3>
+              <ul>
+                <li>Smart contract for DID and credential status state.</li>
+                <li>Credential issue/revoke/verify primitives.</li>
+                <li>Read-only verification path via RPC fallback.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Storage (MongoDB + IPFS)</h3>
+              <ul>
+                <li>MongoDB for users and credential metadata.</li>
+                <li>IPFS (Pinata) for verifiable credential documents.</li>
+                <li>Hybrid model: on-chain proof + off-chain metadata.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide-inner">
+          <h2>3. Design and Architecture</h2>
+          <div class="architecture">
+            <div class="arch-row">
+              <div class="arch-box">React Client</div>
+              <div class="arch-arrow">-&gt;</div>
+              <div class="arch-box">Express API</div>
+            </div>
+            <div class="arch-row">
+              <div class="arch-box">Ethereum Contract</div>
+              <div class="arch-arrow">&lt;-&gt;</div>
+              <div class="arch-box">IPFS + MongoDB</div>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="card">
+              <h3>Layered Design Decisions</h3>
+              <ul>
+                <li>Verification trust anchored on-chain to avoid central dependency.</li>
+                <li>Credential documents stored off-chain to reduce gas and improve scalability.</li>
+                <li>Backend orchestration for consistency, validation, and operational control.</li>
+                <li>Separation of concerns between UI, API orchestration, and chain logic.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Operational Flow</h3>
+              <ol>
+                <li>University creates credential payload.</li>
+                <li>Payload is normalized and hashed deterministically.</li>
+                <li>Metadata pinned to IPFS and CID captured.</li>
+                <li>Credential state issued and later verified from blockchain.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide-inner">
+          <h2>4. Prototype Development</h2>
+          <div class="stats-row">
+            <div class="stat"><span>Mode Shift</span><strong>Demo -> Main</strong></div>
+            <div class="stat"><span>Delivery Style</span><strong>Incremental Commits</strong></div>
+            <div class="stat"><span>Target</span><strong>Production Completion</strong></div>
+          </div>
+          <div class="grid">
+            <div class="card">
+              <h3>Baseline Prototype</h3>
+              <ul>
+                <li>Demo-first flow with in-memory datasets.</li>
+                <li>Core role dashboards and credential interaction mock.</li>
+                <li>Initial smart contract and testing scaffold.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Current Prototype (Latest)</h3>
+              <ul>
+                <li>Main app path enabled as default runtime.</li>
+                <li>Backend environment validation and readiness checks.</li>
+                <li>Improved issuance direction: server-side hash + IPFS path.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Prototype Milestone Timeline</h3>
+            <div class="timeline">
+              <div class="time-step"><strong>M1</strong><span>Initial role dashboards + demo API</span></div>
+              <div class="time-step"><strong>M2</strong><span>Contract workflow + testing scaffold</span></div>
+              <div class="time-step"><strong>M3</strong><span>Main runtime defaults + env validation</span></div>
+              <div class="time-step"><strong>M4</strong><span>Integration visibility + issuance refinements</span></div>
+            </div>
+          </div>
+          <p class="footnote">Development approach: incremental commits with controlled improvements to reduce regressions.</p>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide-inner">
+          <h2>5. Phase 1 Testing</h2>
+          <div class="grid">
+            <div class="card">
+              <h3>What Was Tested</h3>
+              <ul>
+                <li>Contract behaviors: issuer add/remove, DID register, issue/revoke/verify.</li>
+                <li>Role-based route behavior in frontend and backend.</li>
+                <li>Main vs demo runtime switching logic.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Phase 1 Outcome</h3>
+              <ul>
+                <li>Core flows are functionally available for progress demonstration.</li>
+                <li>Main path now aligned for final integration stage.</li>
+                <li>Remaining E2E validation pending final production secrets.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Phase 1 Test Matrix</h3>
+            <div class="matrix">
+              <div class="m-head">Area</div><div class="m-head">Checks</div><div class="m-head">Status</div>
+              <div>Smart Contract</div><div>Issuer, DID, issue/revoke/verify</div><div>Pass</div>
+              <div>Frontend Routing</div><div>Role-based access and mode switching</div><div>Pass</div>
+              <div>API Health</div><div>Runtime + integration readiness visibility</div><div>Pass</div>
+              <div>Full E2E (Real Secrets)</div><div>Pending final credentials and infra keys</div><div>Pending</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide-inner">
+          <h2>6. Debugging and Refinements</h2>
+          <div class="grid">
+            <div class="card">
+              <h3>Key Debugging Actions</h3>
+              <ul>
+                <li>Resolved runtime confusion by making main mode default and demo explicit.</li>
+                <li>Improved verification resilience with read-only RPC fallback.</li>
+                <li>Removed client-side mock IPFS behavior from main issuance flow.</li>
+                <li>Added health + integration status checks for faster diagnosis.</li>
+                <li>Added env templates and validation to prevent startup misconfiguration.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Debugging Log (Representative)</h3>
+              <div class="matrix">
+                <div class="m-head">Issue</div><div class="m-head">Root Cause</div><div class="m-head">Fix</div>
+                <div>Main/Demo mismatch</div><div>Demo boot path default</div><div>Main path defaulted in client/api</div>
+                <div>Verify flow dependency</div><div>Wallet-only read path</div><div>RPC read-only fallback added</div>
+                <div>Issuance inconsistency</div><div>Client mock metadata path</div><div>Backend normalization and orchestration</div>
+                <div>Unknown runtime status</div><div>No readiness telemetry</div><div>Health + integrations endpoint</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide-inner">
+          <h2>7. Previous Version vs Latest Version</h2>
+          <div class="grid">
+            <div class="card">
+              <h3>Previous</h3>
+              <ul>
+                <li>Demo-first runtime</li>
+                <li>Wallet-dependent verification reads</li>
+                <li>Client-side mock IPFS behavior</li>
+                <li>No explicit integration status flow</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Latest</h3>
+              <ul>
+                <li>Main-first runtime with demo toggle</li>
+                <li>RPC fallback verification support</li>
+                <li>Backend-led issuance metadata handling</li>
+                <li>Integration readiness endpoint + UI warning</li>
+              </ul>
+            </div>
+          </div>
+          <div class="stats-row">
+            <div class="stat"><span>Runtime Default</span><strong>Main Application</strong></div>
+            <div class="stat"><span>Verification Read Path</span><strong>Wallet + RPC Fallback</strong></div>
+            <div class="stat"><span>Issuance Direction</span><strong>Backend-Controlled</strong></div>
+          </div>
+          <p class="footnote">Latest branch includes structured, incremental changes focused on production progression.</p>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide-inner">
+          <h2>8. Pending Work and Approval Request</h2>
+          <div class="full-grid">
+            <div class="card tall">
+              <h3>Pending (Critical)</h3>
+              <ol>
+                <li>Finalize real env wiring: MongoDB, RPC, contract address, Pinata.</li>
+                <li>Complete issuer admin lifecycle (`addIssuer` / `removeIssuer`).</li>
+                <li>Add security hardening and request validation across APIs.</li>
+                <li>Finish integration tests and CI quality gate checks.</li>
+              </ol>
+            </div>
+            <div class="card tall">
+              <h3>Approval Requested</h3>
+              <ul>
+                <li>Approve current architecture direction and progress quality.</li>
+                <li>Approve final sprint scope for completion items.</li>
+                <li>Proceed to final integration and deployment-readiness stage.</li>
+              </ul>
+              <p class="closing"><strong>Status:</strong> Project is functionally advanced and ready for final completion phase.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="controls">
+      <button id="prevBtn" aria-label="Previous slide">Prev</button>
+      <p><span id="current">1</span> / <span id="total">8</span></p>
+      <button id="nextBtn" aria-label="Next slide">Next</button>
+    </footer>
+
+    <script src="./script.js"></script>
+  </body>
+  </html>

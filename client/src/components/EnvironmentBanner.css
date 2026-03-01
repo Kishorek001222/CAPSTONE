@@ -1,0 +1,28 @@
+.env-banner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.env-banner-label {
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.env-banner-sub {
+  opacity: 0.9;
+}
+
+.env-banner-demo {
+  background: #7a3e00;
+  color: #fff3e0;
+}
+
+.env-banner-main {
+  background: #0f5132;
+  color: #d1fae5;
+}

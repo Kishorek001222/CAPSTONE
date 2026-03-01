@@ -3,12 +3,15 @@ import IdentityRegistryABI from '../contracts/IdentityRegistry.json';
 
 const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS;
 const CHAIN_ID = parseInt(import.meta.env.VITE_CHAIN_ID || '11155111');
+const RPC_URL = import.meta.env.VITE_RPC_URL || 'https://rpc.sepolia.org';
 
 class BlockchainService {
   constructor() {
     this.provider = null;
+    this.readOnlyProvider = null;
     this.signer = null;
     this.contract = null;
+    this.readOnlyContract = null;
   }
 
   /**
@@ -42,20 +45,59 @@ class BlockchainService {
         await this.switchNetwork();
       }
 
-      // Initialize contract
-      if (CONTRACT_ADDRESS && IdentityRegistryABI.abi) {
-        this.contract = new ethers.Contract(
-          CONTRACT_ADDRESS,
-          IdentityRegistryABI.abi,
-          this.signer
-        );
-      }
+      this.initializeSignerContract();
 
       return accounts[0];
     } catch (error) {
       console.error('Error connecting wallet:', error);
       throw error;
     }
+  }
+
+  initializeSignerContract() {
+    if (!CONTRACT_ADDRESS || !IdentityRegistryABI.abi) {
+      return;
+    }
+
+    if (!this.signer) {
+      return;
+    }
+
+    this.contract = new ethers.Contract(
+      CONTRACT_ADDRESS,
+      IdentityRegistryABI.abi,
+      this.signer
+    );
+  }
+
+  getReadOnlyProvider() {
+    if (this.readOnlyProvider) {
+      return this.readOnlyProvider;
+    }
+
+    this.readOnlyProvider = new ethers.providers.JsonRpcProvider(RPC_URL, CHAIN_ID);
+    return this.readOnlyProvider;
+  }
+
+  getReadOnlyContract() {
+    if (!CONTRACT_ADDRESS) {
+      throw new Error('Contract address is not configured');
+    }
+
+    if (!IdentityRegistryABI.abi) {
+      throw new Error('Contract ABI is not available');
+    }
+
+    if (this.readOnlyContract) {
+      return this.readOnlyContract;
+    }
+
+    this.readOnlyContract = new ethers.Contract(
+      CONTRACT_ADDRESS,
+      IdentityRegistryABI.abi,
+      this.getReadOnlyProvider()
+    );
+    return this.readOnlyContract;
   }
 
   /**
@@ -92,7 +134,7 @@ class BlockchainService {
             symbol: 'ETH',
             decimals: 18,
           },
-          rpcUrls: ['https://sepolia.infura.io/v3/'],
+          rpcUrls: [RPC_URL],
           blockExplorerUrls: ['https://sepolia.etherscan.io'],
         },
       ],
@@ -170,18 +212,9 @@ class BlockchainService {
    * Verify a credential on the blockchain
    */
   async verifyCredential(credentialHash) {
-    if (!this.contract) {
-      // Use read-only provider for verification
-      this.provider = new ethers.providers.Web3Provider(window.ethereum);
-      this.contract = new ethers.Contract(
-        CONTRACT_ADDRESS,
-        IdentityRegistryABI.abi,
-        this.provider
-      );
-    }
-
     try {
-      const result = await this.contract.verifyCredential(credentialHash);
+      const contract = this.getReadOnlyContract();
+      const result = await contract.verifyCredential(credentialHash);
 
       return {
         isValid: result.isValid,
@@ -193,7 +226,10 @@ class BlockchainService {
       };
     } catch (error) {
       console.error('Error verifying credential:', error);
-      throw error;
+      if (!CONTRACT_ADDRESS) {
+        throw new Error('Contract address is missing. Configure VITE_CONTRACT_ADDRESS.');
+      }
+      throw new Error('Unable to verify credential from blockchain RPC.');
     }
   }
 
@@ -201,17 +237,9 @@ class BlockchainService {
    * Get credentials for a subject
    */
   async getCredentialsBySubject(subjectAddress) {
-    if (!this.contract) {
-      this.provider = new ethers.providers.Web3Provider(window.ethereum);
-      this.contract = new ethers.Contract(
-        CONTRACT_ADDRESS,
-        IdentityRegistryABI.abi,
-        this.provider
-      );
-    }
-
     try {
-      return await this.contract.getCredentialsBySubject(subjectAddress);
+      const contract = this.getReadOnlyContract();
+      return await contract.getCredentialsBySubject(subjectAddress);
     } catch (error) {
       console.error('Error getting credentials:', error);
       throw error;
@@ -222,17 +250,9 @@ class BlockchainService {
    * Check if DID exists
    */
   async getDID(address) {
-    if (!this.contract) {
-      this.provider = new ethers.providers.Web3Provider(window.ethereum);
-      this.contract = new ethers.Contract(
-        CONTRACT_ADDRESS,
-        IdentityRegistryABI.abi,
-        this.provider
-      );
-    }
-
     try {
-      const result = await this.contract.getDID(address);
+      const contract = this.getReadOnlyContract();
+      const result = await contract.getDID(address);
       return {
         owner: result.owner_,
         didDocument: result.didDocument_,
@@ -257,11 +277,12 @@ class BlockchainService {
    * Get account balance
    */
   async getBalance(address) {
-    if (!this.provider) {
+    if (!this.provider && this.isMetaMaskInstalled()) {
       this.provider = new ethers.providers.Web3Provider(window.ethereum);
     }
 
-    const balance = await this.provider.getBalance(address);
+    const provider = this.provider || this.getReadOnlyProvider();
+    const balance = await provider.getBalance(address);
     return ethers.utils.formatEther(balance);
   }
 }

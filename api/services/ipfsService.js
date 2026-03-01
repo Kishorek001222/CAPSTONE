@@ -6,6 +6,11 @@ class IPFSService {
     this.pinataApiKey = process.env.PINATA_API_KEY;
     this.pinataSecretKey = process.env.PINATA_SECRET_KEY;
     this.pinataBaseUrl = 'https://api.pinata.cloud';
+    this.pinataGatewayUrl = process.env.PINATA_GATEWAY_URL || 'https://gateway.pinata.cloud/ipfs';
+  }
+
+  isConfigured() {
+    return Boolean(this.pinataApiKey && this.pinataSecretKey);
   }
 
   /**
@@ -50,7 +55,7 @@ class IPFSService {
    */
   async fetchJSON(ipfsHash) {
     try {
-      const url = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
+      const url = `${this.pinataGatewayUrl}/${ipfsHash}`;
       const response = await axios.get(url);
       return response.data;
     } catch (error) {
