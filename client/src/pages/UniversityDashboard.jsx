@@ -96,35 +96,12 @@ const UniversityDashboard = () => {
         issuedBy: user.name,
       };
 
-      // Create credential hash
+      // Hashing and IPFS are handled by backend for consistency and auditability.
       const credentialHash = blockchainService.createCredentialHash({
         ...credentialData,
-        subject: student.email,
-        issuer: user.email,
-        timestamp: Date.now(),
+        subject: student.walletAddress,
+        issuer: user.walletAddress,
       });
-
-      // Create verifiable credential for IPFS
-      const verifiableCredential = {
-        '@context': ['https://www.w3.org/2018/credentials/v1'],
-        type: ['VerifiableCredential', formData.credentialType],
-        issuer: {
-          id: user.did || user.walletAddress,
-          name: user.name,
-          organization: user.organization,
-        },
-        issuanceDate: new Date().toISOString(),
-        expirationDate: formData.expiresAt,
-        credentialSubject: {
-          id: student.did || student.walletAddress,
-          name: student.name,
-          email: student.email,
-          ...credentialData,
-        },
-      };
-
-      // In production, upload to IPFS here
-      const ipfsHash = `Qm${Math.random().toString(36).substring(7)}`;
 
       // Issue on blockchain
       const expiresAt = formData.expiresAt || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
@@ -145,7 +122,6 @@ const UniversityDashboard = () => {
         subjectEmail: formData.studentEmail,
         credentialType: formData.credentialType,
         credentialData,
-        ipfsHash,
         credentialHash,
         transactionHash: txResult.transactionHash,
         expiresAt,
