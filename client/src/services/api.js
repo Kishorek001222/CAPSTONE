@@ -52,6 +52,7 @@ export const credentialAPI = {
   getCredentialByHash: (hash) => api.get(`/api/credentials/${hash}`),
   revokeCredential: (id) => api.put(`/api/credentials/${id}/revoke`),
   getStudents: () => api.get('/api/credentials/students'),
+  getIntegrationStatus: () => api.get('/api/credentials/integrations'),
 };
 
 export default api;
