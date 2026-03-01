@@ -134,7 +134,7 @@ class BlockchainService {
             symbol: 'ETH',
             decimals: 18,
           },
-          rpcUrls: ['https://sepolia.infura.io/v3/'],
+          rpcUrls: [RPC_URL],
           blockExplorerUrls: ['https://sepolia.etherscan.io'],
         },
       ],
@@ -226,7 +226,10 @@ class BlockchainService {
       };
     } catch (error) {
       console.error('Error verifying credential:', error);
-      throw error;
+      if (!CONTRACT_ADDRESS) {
+        throw new Error('Contract address is missing. Configure VITE_CONTRACT_ADDRESS.');
+      }
+      throw new Error('Unable to verify credential from blockchain RPC.');
     }
   }
 
