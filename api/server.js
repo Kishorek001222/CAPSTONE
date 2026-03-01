@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/database');
+const validateEnv = require('./config/validateEnv');
 const errorHandler = require('./middlewares/errorHandler');
 const authRoutes = require('./routes/authRoutes');
 const credentialRoutes = require('./routes/credentialRoutes');
@@ -9,6 +10,9 @@ const blockchainService = require('./services/blockchainService');
 
 // Load env vars
 dotenv.config();
+
+// Validate critical runtime configuration
+validateEnv();
 
 // Connect to database
 connectDB();
